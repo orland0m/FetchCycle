@@ -10,12 +10,15 @@ package com.orland0m.machine;
 
 import java.util.LinkedHashSet;
 import java.util.Stack;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 
 public class Maquina {
+	public List<Integer> ejecutadas;
 	public Stack<Registros> reg;
 	private LinkedHashSet<Memoria> mem;
 	private int primera;
@@ -25,6 +28,7 @@ public class Maquina {
 		reg = new Stack<Registros>();
 		reg.push(new Registros());
 		mem = new  LinkedHashSet<Memoria>();
+		ejecutadas = new LinkedList<Integer>();
 	}
 	
 	public void cargar(String dir, String cont) throws DatoInvalido, DireccionInvalida{
@@ -47,6 +51,11 @@ public class Maquina {
 	}
 	
 	public void fetch(int actual) throws Exception{
+		if(ejecutadas.contains(new Integer(actual))){
+			return;
+		}else{
+			ejecutadas.add(new Integer(actual));
+		}
 		Registros rtmp;
 		Instruccion inst;
 		int siguiente;
@@ -102,7 +111,7 @@ public class Maquina {
 		entrada.close();
 	}
 	
-	public static void main(String... args){
+	public static void main(String... _){
 		Maquina m = new Maquina();
 		try{
 			m.leer();
