@@ -7,11 +7,11 @@
  * Author: Miramontes, Orlando O.
  */
  
-package com.orland0m.machine;
+package com.orland0m.fetch;
 
-public class ArchivoInvalido extends Exception {
+public class DatoInvalido extends Exception{
 	private static final long serialVersionUID = 1L;
-	public ArchivoInvalido(String s){
+	public DatoInvalido(String s){
 		super(s);
 	}
 }

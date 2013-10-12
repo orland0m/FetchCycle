@@ -7,7 +7,7 @@
  * Author: Miramontes, Orlando O.
  */
 
-package com.orland0m.machine;
+package com.orland0m.fetch;
 
 public class Registros{
 	private int PC, IR, AC;

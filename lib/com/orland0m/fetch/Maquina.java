@@ -6,7 +6,7 @@
  * http://creativecommons.org/publicdomain/zero/1.0/ 
  * Author: Miramontes, Orlando O.
  */
-package com.orland0m.machine;
+package com.orland0m.fetch;
 
 import java.util.LinkedHashSet;
 import java.util.Stack;
