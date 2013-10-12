@@ -216,3 +216,7 @@ pip-log.txt
 
 #Java's *.class
 *.class
+
+# Application created files
+secundaria.txt
+archivo.txt

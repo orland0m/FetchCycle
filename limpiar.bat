@@ -1,1 +1,0 @@
-del com\orland0m\machine\*.class
