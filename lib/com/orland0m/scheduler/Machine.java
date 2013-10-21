@@ -4,17 +4,67 @@
  */
 package com.orland0m.scheduler;
 
+import com.orland0m.job.Blocked;
+import com.orland0m.job.Finished;
+import com.orland0m.job.New;
+import com.orland0m.job.PCB;
+import com.orland0m.job.Ready;
+import com.orland0m.job.Running;
+import com.orland0m.job.State;
+import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author orlando
  */
 public class Machine extends javax.swing.JFrame {
 
+    private JFileChooser fc = new JFileChooser();
+    private State[] estados = null;
+    RoundRobin rr;
+    Thread hilo;
+
     /**
      * Creates new form Machine
      */
     public Machine() {
+        File dir = new File("/home/orlando/Documents/GitHub/OSW/testSet/two");
         initComponents();
+        New nuevo = new New();
+        Ready listo = new Ready();
+        Running ejecutandose = new Running();
+        Blocked bloqueado = new Blocked();
+        Finished terminado = new Finished();
+        nuevo.setEstadoListo(listo);
+        ejecutandose.setEstadoListo(listo);
+        ejecutandose.setEstadoBloqueado(bloqueado);
+        ejecutandose.setEstadoTerminado(terminado);
+        bloqueado.setListo(listo);
+        estados = new State[5];
+        estados[0] = nuevo;
+        estados[1] = listo;
+        estados[2] = ejecutandose;
+        estados[3] = bloqueado;
+        estados[4] = terminado;
+        fc.setCurrentDirectory(dir);
+        rr = new RoundRobin();
+        rr.estados = this.estados;
+        rr.logArea = this.logArea;
+        rr.seleccion = this.seleccion;
+        rr.idActual = this.idActual;
+        rr.instruccionActual = this.instruccionActual;
+        rr.instruccionesTurno = this.instruccionesTurno;
+        rr.instruccionesRestantes = this.instruccionesRestantes;
+        hilo = new Thread();
     }
 
     /**
@@ -26,21 +76,229 @@ public class Machine extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTextField1 = new javax.swing.JTextField();
+        jComboBox1 = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        idActual = new javax.swing.JTextField();
+        instruccionActual = new javax.swing.JTextField();
+        instruccionesTurno = new javax.swing.JTextField();
+        instruccionesRestantes = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        seleccion = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logArea = new javax.swing.JTextArea();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Planificador de tareas");
+        setMaximumSize(new java.awt.Dimension(550, 423));
+        setMinimumSize(new java.awt.Dimension(549, 422));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "FCFS", "SJF", "Prioridad" }));
+
+        jButton1.setLabel("Correr");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Abrir");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Proceso en ejecucion");
+
+        jLabel2.setText("ID");
+
+        jLabel3.setText("Instrucciones de turno");
+
+        jLabel4.setText("Instrucciones restantes");
+
+        jLabel5.setText("Instruccion actual");
+
+        jLabel8.setText("Log estados");
+
+        seleccion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nuevo", "Listo", "Ejecucion", "Bloqueado", "Finalizado" }));
+        seleccion.setSelectedIndex(1);
+
+        logArea.setColumns(20);
+        logArea.setRows(5);
+        jScrollPane1.setViewportView(logArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(idActual, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(instruccionActual, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(48, 48, 48)
+                                        .addComponent(jLabel5)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(instruccionesTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(instruccionesRestantes, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(seleccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(idActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(instruccionActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(instruccionesTurno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(instruccionesRestantes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(seleccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int returnVal = fc.showOpenDialog(Machine.this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            jTextField1.setText(file.getAbsolutePath());
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private List<PCB> cargarProcesos() {
+        File file = new File(jTextField1.getText());
+        Scanner scn;
+        String[] elements;
+        PCB tmp;
+        List<PCB> trabajos = new LinkedList();
+        if (file.exists()) {
+            try {
+                scn = new Scanner(file);
+                while (scn.hasNextLine()) {
+                    elements = scn.nextLine().split("\\s+");
+                    if (elements.length == 6) {
+                        tmp = new PCB(elements[0]); // ID
+                        tmp.setSize(Integer.parseInt(elements[1]));
+                        tmp.setPriority(Integer.parseInt(elements[2]));
+                        tmp.setErrorInstruction(Integer.parseInt(elements[3]));
+                        tmp.setBlockingInstruction(Integer.parseInt(elements[4]));
+                        tmp.setArrivalTime(Integer.parseInt(elements[5]));
+                        trabajos.add(tmp);
+                    }else{
+                        assert(false);
+                    }
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(Machine.this, ex.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(Machine.this, "El archivo no existe");
+        }
+        return trabajos;
+    }
+
+    private void ordenarProcesos(List<PCB> trabajos) {
+        int indice = jComboBox1.getSelectedIndex();
+        Comparator<PCB> comparador;
+        switch (indice) {
+            case 1:
+                comparador = new SJF();
+                break;
+            case 2:
+                comparador = new PriorityScheduler();
+                break;
+            default:
+                comparador = new FCFS();
+                break;
+        }
+        for (State e : estados) {
+            e.appendToLog("==========" + comparador + "==========");
+        }
+        Collections.sort(trabajos, comparador);
+    }
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        List<PCB> trabajos;
+        if (hilo.isAlive()) {
+            synchronized (rr.stopLock) {
+                rr.stopLock.stop = true;
+            }
+            try {
+                hilo.join();
+                synchronized (rr.stopLock) {
+                    rr.stopLock.stop = false;
+                }
+            } catch (InterruptedException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+        for (State s : estados) {
+            s.reset();
+        }
+        trabajos = cargarProcesos();
+        for (PCB trabajo : trabajos) {
+            estados[0].transition(null, trabajo);
+        }
+        ordenarProcesos(estados[0].getQueue());
+        hilo = new Thread(rr);
+        hilo.start();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -71,11 +329,29 @@ public class Machine extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Machine().setVisible(true);
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField idActual;
+    private javax.swing.JTextField instruccionActual;
+    private javax.swing.JTextField instruccionesRestantes;
+    private javax.swing.JTextField instruccionesTurno;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextArea logArea;
+    private javax.swing.JComboBox seleccion;
     // End of variables declaration//GEN-END:variables
 }
